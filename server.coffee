@@ -552,7 +552,7 @@ globals.Document._setupMigrations = ->
         _id: 1
         _schema: 1
     ).observeChanges
-      added: (id, fields) =>
+      added: globals.Document._observerCallback (id, fields) =>
         # TODO: Check if schema is known and complain if not
         # TODO: We could automatically migrate old documents if we know of newer schema
         return if fields._schema
