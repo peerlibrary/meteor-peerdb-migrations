@@ -23,9 +23,11 @@ In any large project your documents' schemas will evolve through time. While Mon
 any schema, your program logic might require one. It is error prone to allow documents with various versions
 of schemas to exist at the same time and it makes your program code more complicated.
 
-To address this, PeerDB provides you with a way to define schema migrations. They are applied automatically on
-a startup of your application to migrate any documents as necessary. To know which documents are at which schema
-version, PeerDB adds a `_schema` field to all documents with a [semantic version](http://semver.org/) number.
+To address this, PeerDB migrations provide you with a way to define schema migrations. They are applied
+automatically on a startup of your application to migrate any documents as necessary. To know which documents
+are at which schema version, PeerDB migrations add a `_schema` field to all PeerDB documents with a
+[semantic version](http://semver.org/) number. This allows recovery of partially migrated collections and
+importing documents with a different schema version.
 
 To define a migration, extend a class `Document.PatchMigration`, `Document.MinorMigration`, or
 `Document.MajorMigration`, depending on whether your schema change is a backwards-compatible bug fix,
