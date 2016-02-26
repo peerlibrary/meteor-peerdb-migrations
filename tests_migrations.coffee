@@ -1,6 +1,6 @@
 class MigrationTest extends Document
   # Other fields:
-  #   test
+  #   test (which is later on renamed to "renamed")
 
   @Meta
     name: 'MigrationTest'
@@ -253,5 +253,23 @@ unless Document.migrationsDisabled
           _id: id
           _schema: '5.2.1'
           renamed: 'test field'
+        ]
+
+      # Insert without schema.
+      MigrationTest.documents.insert {renamed: 'another field'}
+
+      # Wait for observer to set the schema field.
+      Meteor.setTimeout expect(), 200 # ms
+  ,
+    (test, expect) ->
+      docs = MigrationTest.documents.find({renamed: 'another field'},
+        transform: null, # So that we can use test.equal
+        fields:
+          _id: 0
+      ).fetch()
+      test.equal docs,
+        [
+          _schema: '5.2.1'
+          renamed: 'another field'
         ]
   ]

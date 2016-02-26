@@ -552,7 +552,7 @@ globals.Document._setupMigrations = ->
         _id: 1
         _schema: 1
     ).observeChanges
-      added: globals.Document._observerCallback (id, fields) =>
+      added: globals.Document._observerCallback true, (id, fields) =>
         # TODO: Check if schema is known and complain if not
         # TODO: We could automatically migrate old documents if we know of newer schema
         return if fields._schema
@@ -567,8 +567,8 @@ globals.Document._setupMigrations = ->
 # TODO: What happens if this is called multiple times? We should make sure that for each document observrs are made only once
 setupMigrations = ->
   updateAll = false
-  # Migrate all except local collections
-  for document in globals.Document.list when document.Meta.collection._name isnt null
+  # Migrate only server collections.
+  for document in globals.Document.list when document.Meta.collection._connection is Meteor.server
     # Always run setupMigrations, don't short circuit
     updateAll = document._setupMigrations() or updateAll
 
