@@ -77,8 +77,6 @@ if Meteor.isServer
   # Initialize the database
   MigrationTest.documents.remove {}
 
-@ALL.push MigrationTest
-
 testDefinition = (test, count) ->
   test.equal MigrationTest.Meta._name, 'MigrationTest'
   test.equal MigrationTest.Meta.parent, _TestMigrationTest.Meta
