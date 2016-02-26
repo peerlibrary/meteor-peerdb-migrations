@@ -1,7 +1,7 @@
 Package.describe({
   name: 'peerlibrary:peerdb-migrations',
   summary: "PeerDB migrations.",
-  version: '0.1.1',
+  version: '0.2.0',
   git: 'https://github.com/peerlibrary/meteor-peerdb-migrations.git'
 });
 
