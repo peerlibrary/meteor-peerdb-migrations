@@ -502,7 +502,7 @@ globals.Document.migrate = ->
         newVersion: newSchema
         migrated: counts.migrated
         all: counts.all
-        timestamp: moment.utc().toDate()
+        timestamp: new Date()
 
     if migration instanceof @_RenameCollectionMigration
       Log.info "Renamed collection '#{ currentName }' to '#{ newName }'"
@@ -585,7 +585,7 @@ migrations = ->
       newCollectionName: null
       oldVersion: null
       newVersion: null
-      timestamp: moment.utc().toDate()
+      timestamp: new Date()
       migrated: 0
       all: 0
 
