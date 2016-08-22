@@ -22,16 +22,16 @@ catch error
 globals.Document.Migrations = new Meteor.Collection 'peerdb.migrations'
 
 globals.Document._Migration = class
-    updateAll: (document, collection, currentSchema, intoSchema) =>
-      @_updateAll = true
+  updateAll: (document, collection, currentSchema, intoSchema) =>
+    @_updateAll = true
 
-    forward: (document, collection, currentSchema, newSchema) =>
-      migrated: 0
-      all: collection.update {_schema: currentSchema}, {$set: _schema: newSchema}, {multi: true}
+  forward: (document, collection, currentSchema, newSchema) =>
+    migrated: 0
+    all: collection.update {_schema: currentSchema}, {$set: _schema: newSchema}, {multi: true}
 
-    backward: (document, collection, currentSchema, oldSchema) =>
-      migrated: 0
-      all: collection.update {_schema: currentSchema}, {$set: _schema: oldSchema}, {multi: true}
+  backward: (document, collection, currentSchema, oldSchema) =>
+    migrated: 0
+    all: collection.update {_schema: currentSchema}, {$set: _schema: oldSchema}, {multi: true}
 
 globals.Document.PatchMigration = class extends globals.Document._Migration
 
