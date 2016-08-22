@@ -6,7 +6,7 @@ Package.describe({
 });
 
 Package.onUse(function (api) {
-  api.versionsFrom('METEOR@1.0.3.1');
+  api.versionsFrom('METEOR@1.4.0.1');
 
   // Core dependencies.
   api.use([
@@ -19,9 +19,9 @@ Package.onUse(function (api) {
   // 3rd party dependencies.
   api.use([
     'peerlibrary:assert@0.2.5',
-    'peerlibrary:util@0.3.0',
-    'peerlibrary:directcollection@0.5.0',
-    'peerlibrary:peerdb@0.20.0'
+    'peerlibrary:util@0.5.0',
+    'peerlibrary:directcollection@0.6.0',
+    'peerlibrary:peerdb@0.22.1'
   ], 'server');
 
   api.addFiles([
@@ -30,6 +30,9 @@ Package.onUse(function (api) {
 });
 
 Package.onTest(function (api) {
+  api.versionsFrom('METEOR@1.4.0.1');
+
+  // Core dependencies.
   api.use([
     'tinytest',
     'test-helpers',
@@ -48,7 +51,7 @@ Package.onTest(function (api) {
 
   // 3rd party dependencies.
   api.use([
-    'peerlibrary:peerdb@0.20.0',
+    'peerlibrary:peerdb@0.22.1',
     'peerlibrary:assert@0.2.5',
     'peerlibrary:directcollection@0.5.0'
   ]);
