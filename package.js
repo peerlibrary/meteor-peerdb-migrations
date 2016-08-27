@@ -20,7 +20,7 @@ Package.onUse(function (api) {
   api.use([
     'peerlibrary:assert@0.2.5',
     'peerlibrary:util@0.5.0',
-    'peerlibrary:directcollection@0.6.1',
+    'peerlibrary:directcollection@0.6.2',
     'peerlibrary:peerdb@0.22.1'
   ], 'server');
 
