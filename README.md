@@ -102,4 +102,6 @@ Disabling migrations just disables running them; documents are still populated w
 Examples
 --------
 
-See [migrations in PeerLibrary](https://github.com/peerlibrary/peerlibrary/tree/development/server/migrations).
+See migrations in:
+ * [PeerLibrary](https://github.com/peerlibrary/peerlibrary/tree/development/server/migrations)
+ * [PeerMind](https://github.com/peer/mind/tree/master/packages/core/migrations)
