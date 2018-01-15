@@ -25,18 +25,18 @@ MigrationTest.addMigration new Migration3()
 class Migration4 extends Document.MajorMigration
   name: "Migration 4"
 
-  forward: (document, collection, currentSchema, newSchema) =>
+  forward: (document, collection, currentSchema, newSchema) ->
     count = collection.update {_schema: currentSchema}, {$rename: {test: 'renamed'}, $set: {_schema: newSchema}}, {multi: true}
 
-    counts = super
+    counts = super document, collection, currentSchema, newSchema
     counts.migrated += count
     counts.all += count
     counts
 
-  backward: (document, collection, currentSchema, oldSchema) =>
+  backward: (document, collection, currentSchema, oldSchema) ->
     count = collection.update {_schema: currentSchema}, {$rename: {renamed: 'test'}, $set: {_schema: oldSchema}}, {multi: true}
 
-    counts = super
+    counts = super document, collection, currentSchema, oldSchema
     counts.migrated += count
     counts.all += count
     counts

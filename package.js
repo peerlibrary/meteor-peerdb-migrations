@@ -1,16 +1,17 @@
 Package.describe({
   name: 'peerlibrary:peerdb-migrations',
   summary: "PeerDB migrations.",
-  version: '0.3.0',
+  version: '0.4.0',
   git: 'https://github.com/peerlibrary/meteor-peerdb-migrations.git'
 });
 
 Package.onUse(function (api) {
-  api.versionsFrom('METEOR@1.4.0.1');
+  api.versionsFrom('METEOR@1.4.4.5');
 
   // Core dependencies.
   api.use([
-    'coffeescript',
+    'coffeescript@2.0.3_3',
+    'ecmascript',
     'underscore',
     'minimongo',
     'logging'
@@ -20,8 +21,8 @@ Package.onUse(function (api) {
   api.use([
     'peerlibrary:assert@0.2.5',
     'peerlibrary:util@0.5.0',
-    'peerlibrary:directcollection@0.6.2',
-    'peerlibrary:peerdb@0.22.1'
+    'peerlibrary:directcollection@0.7.0',
+    'peerlibrary:peerdb@0.25.0'
   ], 'server');
 
   api.addFiles([
@@ -30,13 +31,14 @@ Package.onUse(function (api) {
 });
 
 Package.onTest(function (api) {
-  api.versionsFrom('METEOR@1.4.0.1');
+  api.versionsFrom('METEOR@1.4.4.5');
 
   // Core dependencies.
   api.use([
+    'coffeescript@2.0.3_3',
+    'ecmascript',
     'tinytest',
     'test-helpers',
-    'coffeescript',
     'underscore',
     'random',
     'logging',
@@ -51,9 +53,9 @@ Package.onTest(function (api) {
 
   // 3rd party dependencies.
   api.use([
-    'peerlibrary:peerdb@0.22.1',
+    'peerlibrary:peerdb@0.25.0',
     'peerlibrary:assert@0.2.5',
-    'peerlibrary:directcollection@0.5.0'
+    'peerlibrary:directcollection@0.7.0'
   ]);
 
   api.addFiles([

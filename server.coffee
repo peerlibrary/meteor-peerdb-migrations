@@ -1,4 +1,4 @@
-semver = Npm.require 'semver'
+import semver from 'semver'
 
 globals = @
 
@@ -21,70 +21,71 @@ catch error
 # We use a lower case collection name to signal it is a system collection
 globals.Document.Migrations = new Meteor.Collection 'peerdb.migrations'
 
-globals.Document._Migration = class
-  updateAll: (document, collection, currentSchema, intoSchema) =>
+class globals.Document._Migration
+  updateAll: (document, collection, currentSchema, intoSchema) ->
     @_updateAll = true
 
-  forward: (document, collection, currentSchema, newSchema) =>
+  forward: (document, collection, currentSchema, newSchema) ->
     migrated: 0
     all: collection.update {_schema: currentSchema}, {$set: _schema: newSchema}, {multi: true}
 
-  backward: (document, collection, currentSchema, oldSchema) =>
+  backward: (document, collection, currentSchema, oldSchema) ->
     migrated: 0
     all: collection.update {_schema: currentSchema}, {$set: _schema: oldSchema}, {multi: true}
 
-globals.Document.PatchMigration = class extends globals.Document._Migration
+class globals.Document.PatchMigration extends globals.Document._Migration
 
-globals.Document.MinorMigration = class extends globals.Document._Migration
+class globals.Document.MinorMigration extends globals.Document._Migration
 
-globals.Document.MajorMigration = class extends globals.Document._Migration
+class globals.Document.MajorMigration extends globals.Document._Migration
 
-globals.Document.AddReferenceFieldsMigration = class extends globals.Document.MinorMigration
-  forward: (document, collection, currentSchema, newSchema) =>
+class globals.Document.AddReferenceFieldsMigration extends globals.Document.MinorMigration
+  forward: (document, collection, currentSchema, newSchema) ->
     @updateAll document, collection, currentSchema, newSchema
 
-    counts = super
+    counts = super document, collection, currentSchema, newSchema
     counts.migrated = counts.all
     counts
 
-  backward: (document, collection, currentSchema, oldSchema) =>
+  backward: (document, collection, currentSchema, oldSchema) ->
     @updateAll document, collection, currentSchema, oldSchema
 
-    counts = super
+    counts = super document, collection, currentSchema, oldSchema
     counts.migrated = counts.all
     counts
 
-globals.Document.RemoveReferenceFieldsMigration = class extends globals.Document.MajorMigration
-  forward: (document, collection, currentSchema, newSchema) =>
+class globals.Document.RemoveReferenceFieldsMigration extends globals.Document.MajorMigration
+  forward: (document, collection, currentSchema, newSchema) ->
     @updateAll document, collection, currentSchema, newSchema
 
-    counts = super
+    counts = super document, collection, currentSchema, newSchema
     counts.migrated = counts.all
     counts
 
-  backward: (document, collection, currentSchema, oldSchema) =>
+  backward: (document, collection, currentSchema, oldSchema) ->
     @updateAll document, collection, currentSchema, oldSchema
 
-    counts = super
+    counts = super document, collection, currentSchema, oldSchema
     counts.migrated = counts.all
     counts
 
-globals.Document.AddGeneratedFieldsMigration = class extends globals.Document.MinorMigration
+class globals.Document.AddGeneratedFieldsMigration extends globals.Document.MinorMigration
   # Fields is an array
   constructor: (fields) ->
-    @fields = fields if fields
-    super
+    super()
 
-  forward: (document, collection, currentSchema, newSchema) =>
+    @fields = fields if fields
+
+  forward: (document, collection, currentSchema, newSchema) ->
     assert @fields
 
     @updateAll document, collection, currentSchema, newSchema
 
-    counts = super
+    counts = super document, collection, currentSchema, newSchema
     counts.migrated = counts.all
     counts
 
-  backward: (document, collection, currentSchema, oldSchema) =>
+  backward: (document, collection, currentSchema, oldSchema) ->
     update =
       $unset: {}
       $set:
@@ -95,42 +96,44 @@ globals.Document.AddGeneratedFieldsMigration = class extends globals.Document.Mi
 
     count = collection.update {_schema: currentSchema}, update, {multi: true}
 
-    counts = super
+    counts = super document, collection, currentSchema, oldSchema
     counts.migrated += count
     counts.all += count
     counts
 
-globals.Document.ModifyGeneratedFieldsMigration = class extends globals.Document.PatchMigration
+class globals.Document.ModifyGeneratedFieldsMigration extends globals.Document.PatchMigration
   # Fields is an array
   constructor: (fields) ->
-    @fields = fields if fields
-    super
+    super()
 
-  forward: (document, collection, currentSchema, newSchema) =>
+    @fields = fields if fields
+
+  forward: (document, collection, currentSchema, newSchema) ->
     assert @fields
 
     @updateAll document, collection, currentSchema, newSchema
 
-    counts = super
+    counts = super document, collection, currentSchema, newSchema
     counts.migrated = counts.all
     counts
 
-  backward: (document, collection, currentSchema, oldSchema) =>
+  backward: (document, collection, currentSchema, oldSchema) ->
     assert @fields
 
     @updateAll document, collection, currentSchema, oldSchema
 
-    counts = super
+    counts = super document, collection, currentSchema, oldSchema
     counts.migrated = counts.all
     counts
 
-globals.Document.RemoveGeneratedFieldsMigration = class extends globals.Document.MajorMigration
+class globals.Document.RemoveGeneratedFieldsMigration extends globals.Document.MajorMigration
   # Fields is an array
   constructor: (fields) ->
-    @fields = fields if fields
-    super
+    super()
 
-  forward: (document, collection, currentSchema, newSchema) =>
+    @fields = fields if fields
+
+  forward: (document, collection, currentSchema, newSchema) ->
     update =
       $unset: {}
       $set:
@@ -141,31 +144,32 @@ globals.Document.RemoveGeneratedFieldsMigration = class extends globals.Document
 
     count = collection.update {_schema: currentSchema}, update, {multi: true}
 
-    counts = super
+    counts = super document, collection, currentSchema, newSchema
     counts.migrated += count
     counts.all += count
     counts
 
-  backward: (document, collection, currentSchema, oldSchema) =>
+  backward: (document, collection, currentSchema, oldSchema) ->
     assert @fields
 
     @updateAll document, collection, currentSchema, oldSchema
 
-    counts = super
+    counts = super document, collection, currentSchema, oldSchema
     counts.migrated = counts.all
     counts
 
-globals.Document.AddOptionalFieldsMigration = class extends globals.Document.MinorMigration
+class globals.Document.AddOptionalFieldsMigration extends globals.Document.MinorMigration
   # Fields is an array
   constructor: (fields) ->
+    super()
+
     @fields = fields if fields
-    super
 
-  forward: (document, collection, currentSchema, newSchema) =>
+  forward: (document, collection, currentSchema, newSchema) ->
     assert @fields
-    super
+    super document, collection, currentSchema, newSchema
 
-  backward: (document, collection, currentSchema, oldSchema) =>
+  backward: (document, collection, currentSchema, oldSchema) ->
     update =
       $unset: {}
       $set:
@@ -176,18 +180,19 @@ globals.Document.AddOptionalFieldsMigration = class extends globals.Document.Min
 
     count = collection.update {_schema: currentSchema}, update, {multi: true}
 
-    counts = super
+    counts = super document, collection, currentSchema, oldSchema
     counts.migrated += count
     counts.all += count
     counts
 
-globals.Document.AddRequiredFieldsMigration = class extends globals.Document.MinorMigration
+class globals.Document.AddRequiredFieldsMigration extends globals.Document.MinorMigration
   # Fields is an object
   constructor: (fields) ->
-    @fields = fields if fields
-    super
+    super()
 
-  forward: (document, collection, currentSchema, newSchema) =>
+    @fields = fields if fields
+
+  forward: (document, collection, currentSchema, newSchema) ->
     selector =
       _schema: currentSchema
     for field, value of @fields
@@ -205,12 +210,12 @@ globals.Document.AddRequiredFieldsMigration = class extends globals.Document.Min
 
     count = collection.update selector, update, {multi: true}
 
-    counts = super
+    counts = super document, collection, currentSchema, newSchema
     counts.migrated += count
     counts.all += count
     counts
 
-  backward: (document, collection, currentSchema, oldSchema) =>
+  backward: (document, collection, currentSchema, oldSchema) ->
     update =
       $unset: {}
       $set:
@@ -221,18 +226,19 @@ globals.Document.AddRequiredFieldsMigration = class extends globals.Document.Min
 
     count = collection.update {_schema: currentSchema}, update, {multi: true}
 
-    counts = super
+    counts = super document, collection, currentSchema, oldSchema
     counts.migrated += count
     counts.all += count
     counts
 
-globals.Document.RemoveFieldsMigration = class extends globals.Document.MajorMigration
+class globals.Document.RemoveFieldsMigration extends globals.Document.MajorMigration
   # Fields is an object
   constructor: (fields) ->
-    @fields = fields if fields
-    super
+    super()
 
-  forward: (document, collection, currentSchema, newSchema) =>
+    @fields = fields if fields
+
+  forward: (document, collection, currentSchema, newSchema) ->
     update =
       $unset: {}
       $set:
@@ -243,12 +249,12 @@ globals.Document.RemoveFieldsMigration = class extends globals.Document.MajorMig
 
     count = collection.update {_schema: currentSchema}, update, {multi: true}
 
-    counts = super
+    counts = super document, collection, currentSchema, newSchema
     counts.migrated += count
     counts.all += count
     counts
 
-  backward: (document, collection, currentSchema, oldSchema) =>
+  backward: (document, collection, currentSchema, oldSchema) ->
     selector =
       _schema: currentSchema
     for field, value of @fields
@@ -267,18 +273,19 @@ globals.Document.RemoveFieldsMigration = class extends globals.Document.MajorMig
 
     count = collection.update selector, update, {multi: true}
 
-    counts = super
+    counts = super document, collection, currentSchema, oldSchema
     counts.migrated += count
     counts.all += count
     counts
 
-globals.Document.RenameFieldsMigration = class extends globals.Document.MajorMigration
+class globals.Document.RenameFieldsMigration extends globals.Document.MajorMigration
   # Fields is object
   constructor: (fields) ->
-    @fields = fields if fields
-    super
+    super()
 
-  forward: (document, collection, currentSchema, newSchema) =>
+    @fields = fields if fields
+
+  forward: (document, collection, currentSchema, newSchema) ->
     update =
       $set:
         _schema: newSchema
@@ -289,12 +296,12 @@ globals.Document.RenameFieldsMigration = class extends globals.Document.MajorMig
 
     count = collection.update {_schema: currentSchema}, update, {multi: true}
 
-    counts = super
+    counts = super document, collection, currentSchema, newSchema
     counts.migrated += count
     counts.all += count
     counts
 
-  backward: (document, collection, currentSchema, oldSchema) =>
+  backward: (document, collection, currentSchema, oldSchema) ->
     update =
       $set:
         _schema: oldSchema
@@ -306,22 +313,24 @@ globals.Document.RenameFieldsMigration = class extends globals.Document.MajorMig
 
     count = collection.update {_schema: currentSchema}, update, {multi: true}
 
-    counts = super
+    counts = super document, collection, currentSchema, oldSchema
     counts.migrated += count
     counts.all += count
     counts
 
-globals.Document._RenameCollectionMigration = class extends globals.Document.MajorMigration
+class globals.Document._RenameCollectionMigration extends globals.Document.MajorMigration
   constructor: (@oldName, @newName) ->
+    super()
+
     @name = "Renaming collection from '#{ @oldName }' to '#{ @newName }'"
 
-  _rename: (collection, to) =>
+  _rename: (collection, to) ->
     try
       collection.renameCollection to
     catch error
       throw error unless /source namespace does not exist/.test "#{ error }"
 
-  forward: (document, collection, currentSchema, newSchema) =>
+  forward: (document, collection, currentSchema, newSchema) ->
     assert.equal collection.name, @oldName
 
     @_rename collection, @newName
@@ -329,12 +338,12 @@ globals.Document._RenameCollectionMigration = class extends globals.Document.Maj
     collection.name = @newName
 
     # We renamed the collection, so let's update all documents to new schema version
-    counts = super
+    counts = super document, collection, currentSchema, newSchema
     # We migrated everything
     counts.migrated = counts.all
     counts
 
-  backward: (document, collection, currentSchema, newSchema) =>
+  backward: (document, collection, currentSchema, newSchema) ->
     assert.equal collection.name, @newName
 
     @_rename collection, @oldName
@@ -342,7 +351,7 @@ globals.Document._RenameCollectionMigration = class extends globals.Document.Maj
     collection.name = @oldName
 
     # We renamed the collection, so let's update all documents to old schema version
-    counts = super
+    counts = super document, collection, currentSchema, newSchema
     # We migrated everything
     counts.migrated = counts.all
     counts
