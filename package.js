@@ -20,9 +20,8 @@ Package.onUse(function (api) {
   // 3rd party dependencies.
   api.use([
     'peerlibrary:assert@0.2.5',
-    'peerlibrary:util@0.5.0',
     'peerlibrary:directcollection@0.7.0',
-    'peerlibrary:peerdb@0.25.0'
+    'peerlibrary:peerdb@0.26.0'
   ], 'server');
 
   api.addFiles([

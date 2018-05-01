@@ -1,4 +1,5 @@
 import semver from 'semver'
+import util from 'util'
 
 globals = @
 
