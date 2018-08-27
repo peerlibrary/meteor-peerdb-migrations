@@ -566,11 +566,23 @@ globals.Document._setupMigrationsObserve = ->
         $set:
           _schema: @Meta.schema
 
+getReplacedDocument = (document) ->
+  return document unless document.Meta._replaced
+
+  for current in globals.Document.list
+    parentMeta = current.Meta
+    while parentMeta
+      if parentMeta is document.Meta
+        return current
+      parentMeta = parentMeta.parent
+
+  throw new Error "Cannot find a replaced document for '#{document.Meta._name}'."
+
 migrateAllForward = ->
   updateAll = false
 
   for migrationDescriptor in allMigrationDescriptors
-    updateAll = migrationDescriptor.document.migrateForward(migrationDescriptor.migration) or updateAll
+    updateAll = getReplacedDocument(migrationDescriptor.document).migrateForward(migrationDescriptor.migration) or updateAll
 
   # We set initial schema value for all documents in server collections which do not have migrations.
   for document in globals.Document.list when document.Meta.collection._connection is Meteor.server
