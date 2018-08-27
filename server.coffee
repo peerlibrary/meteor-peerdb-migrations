@@ -572,6 +572,11 @@ migrateAllForward = ->
   for migrationDescriptor in allMigrationDescriptors
     updateAll = migrationDescriptor.document.migrateForward(migrationDescriptor.migration) or updateAll
 
+  # We set initial schema value for all documents in server collections which do not have migrations.
+  for document in globals.Document.list when document.Meta.collection._connection is Meteor.server
+    unless document.Meta.schema
+      document.migrateForward(null)
+
   # Return if updateAll should be called.
   updateAll
 
