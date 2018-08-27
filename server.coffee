@@ -417,8 +417,6 @@ globals.Document.migrateForward = (untilMigration) ->
       else
         throw new Error "Inconsistent migration recorded, expected migrationName='#{migration.name}', oldCollectionName='#{currentName}', newCollectionName='#{newName}', oldVersion='#{currentSchema}', newVersion='#{newSchema}', got: #{util.inspect migrations[0], depth: 10}"
     else if migrationsPending is Number.POSITIVE_INFINITY
-      # This is the collection name recorded as the last, so we start with it.
-      initialName = currentName
       migrationsPending = i
 
     currentSchema = newSchema
