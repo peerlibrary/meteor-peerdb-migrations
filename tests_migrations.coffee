@@ -65,7 +65,7 @@ class Migration8 extends Document.PatchMigration
 
 MigrationTest.addMigration new Migration8()
 
-# Store away for testing
+# Store away for testing.
 _TestMigrationTest = MigrationTest
 
 class MigrationTest extends MigrationTest
@@ -74,7 +74,7 @@ class MigrationTest extends MigrationTest
     replaceParent: true
 
 if Meteor.isServer
-  # Initialize the database
+  # Initialize the database.
   MigrationTest.documents.remove {}
 
 testDefinition = (test, count) ->
@@ -199,22 +199,22 @@ unless Document.migrationsDisabled
       db = MongoInternals.defaultRemoteCollectionDriver().mongo.db
       test.isTrue db
 
-      # Reset migrated count
+      # Reset migrated count.
       Document.Migrations.update({}, {$set: {migrated: 0, all: 0}}, {multi: true})
 
-      # We ignore any error
+      # We ignore any error.
       db.dropCollection 'OlderMigrationTests', Meteor.bindEnvironment expect(->), (e) -> throw e
       db.dropCollection 'OldMigrationTests', Meteor.bindEnvironment expect(->), (e) -> throw e
       db.dropCollection 'MigrationTests', Meteor.bindEnvironment expect(->), (e) -> throw e
 
       testDefinition test, 0
 
-      # We should be able to call migrate multiple times
-      MigrationTest.migrate()
+      # We should be able to call migrate multiple times.
+      MigrationTest.migrateForward(MigrationTest.Meta.migrations[MigrationTest.Meta.migrations.length - 1])
 
       testDefinition test, 0
 
-      # We ignore any error
+      # We ignore any error.
       db.dropCollection 'OlderMigrationTests', Meteor.bindEnvironment expect(->), (e) -> throw e
       db.dropCollection 'OldMigrationTests', Meteor.bindEnvironment expect(->), (e) -> throw e
       db.dropCollection 'MigrationTests', Meteor.bindEnvironment expect(->), (e) -> throw e
@@ -226,10 +226,11 @@ unless Document.migrationsDisabled
       id = Random.id()
       collection.insert {_id: id, _schema: '1.0.0', test: 'test field'}
 
-      MigrationTest.migrate()
+      MigrationTest.migrateForward(MigrationTest.Meta.migrations[MigrationTest.Meta.migrations.length - 1])
 
       docs = MigrationTest.documents.find({},
-        transform: null # So that we can use test.equal
+        # So that we can use test.equal.
+        transform: null
       ).fetch()
       test.equal docs,
         [
@@ -240,13 +241,14 @@ unless Document.migrationsDisabled
 
       testDefinition test, 1
 
-      # We should be able to call migrate multiple times
-      MigrationTest.migrate()
+      # We should be able to call migrate multiple times.
+      MigrationTest.migrateForward(MigrationTest.Meta.migrations[MigrationTest.Meta.migrations.length - 1])
 
       testDefinition test, 1
 
       docs = MigrationTest.documents.find({},
-        transform: null # So that we can use test.equal
+        # So that we can use test.equal.
+        transform: null
       ).fetch()
       test.equal docs,
         [
@@ -263,7 +265,8 @@ unless Document.migrationsDisabled
   ,
     (test, expect) ->
       docs = MigrationTest.documents.find({renamed: 'another field'},
-        transform: null, # So that we can use test.equal
+        # So that we can use test.equal.
+        transform: null,
         fields:
           _id: 0
       ).fetch()
