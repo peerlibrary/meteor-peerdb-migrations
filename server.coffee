@@ -494,7 +494,7 @@ globals.Document.migrateForward = (untilMigration) ->
         # To catch any errors.
         multi: true
 
-      throw new Error "Incosistent migration record state, missing migrationName='#{migration.name}', oldCollectionName='#{currentName}', newCollectionName='#{newName}', oldVersion='#{currentSchema}', newVersion='#{newSchema}'" unless count is 1
+      throw new Error "Inconsistent migration record state, missing migrationName='#{migration.name}', oldCollectionName='#{currentName}', newCollectionName='#{newName}', oldVersion='#{currentSchema}', newVersion='#{newSchema}'" unless count is 1
     else
       count = globals.Document.Migrations.find(
         migrationName: migration.name
@@ -504,7 +504,7 @@ globals.Document.migrateForward = (untilMigration) ->
         newVersion: newSchema
       ).count()
 
-      throw new Error "Incosistent migration record state, unexpected migrationName='#{migration.name}', oldCollectionName='#{currentName}', newCollectionName='#{newName}', oldVersion='#{currentSchema}', newVersion='#{newSchema}'" unless count is 0
+      throw new Error "Inconsistent migration record state, unexpected migrationName='#{migration.name}', oldCollectionName='#{currentName}', newCollectionName='#{newName}', oldVersion='#{currentSchema}', newVersion='#{newSchema}'" unless count is 0
 
       globals.Document.Migrations.insert
         # Things should not be running in parallel here anyway, so we can get next serial in this way.
