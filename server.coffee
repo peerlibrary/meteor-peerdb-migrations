@@ -9,7 +9,7 @@ try
   # Migration of migrations collection.
   new DirectCollection('migrations').renameCollection 'peerdb.migrations'
 catch error
-  throw error unless /source namespace does not exist/.test "#{error}"
+  throw error unless /source namespace does not exist|Source collection .* does not exist/.test "#{error}"
 
 # Fields:
 #   serial
@@ -332,7 +332,7 @@ class globals.Document._RenameCollectionMigration extends globals.Document.Major
     try
       collection.renameCollection to
     catch error
-      throw error unless /source namespace does not exist/.test "#{error}"
+      throw error unless /source namespace does not exist|Source collection .* does not exist/.test "#{error}"
 
   forward: (document, collection, currentSchema, newSchema) ->
     assert.equal collection.name, @oldName
